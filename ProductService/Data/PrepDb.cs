@@ -13,16 +13,6 @@ namespace ProductService.Data
 
         private static void SeedData(AppDbContext context)
         {
-            Console.WriteLine("--> Attempting to migrate the database...");
-            try
-            {
-                context.Database.Migrate();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"--> Could not run migrations: {ex.Message}");
-            }
-
             if (!context.Products.Any())
             {
                 // If db is empty

@@ -9,17 +9,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Use the correct SQL Server db
-if (builder.Environment.IsProduction())
-{
-    //TODO: use db deployed in kubernetes
-}
-else
-{
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("ProductsConnDev"))
-    );
-}
+// Use an InMemory db for development
+Console.WriteLine("--> Using an InMemory database");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("ProductInMemoryDb")
+);
 
 builder.Services.AddScoped<IProductRepo, ProductRepo>();
 
