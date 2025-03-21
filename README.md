@@ -15,3 +15,12 @@ Docker will be an important part of this PoC, so I did some learning in a new pr
 I tried to create a Docker image based on the new project to then set up a Docker container. I then tried to deploy this container in Kubernetes.
 
 In addition, I also tried to get the new project to work with SQL Server and then transfer this to a Docker container as well. However, this did not go so well. There were some problems regarding Docker and the connection to the local SQL Server database.
+
+### Friday 21/03/2025
+
+Today I decided to move away from the SQL Server database for in development. This is because there were problems with the connection between Docker and SQL Server and given my limited knowledge of Docker, I have switched to an InMemory database for simplicity. Once the services will be deployed in Kubernetes a SQL Server database will be set up in Kubernetes though.
+
+Before I started programming further I took some time today to make a visual representation of what I plan to develop. Since this is a proof-of-concept, and therefore should not be a too large application, I focused on 3 core features for an e-commerce that can also represent the way microservices work.
+
+![image](https://github.com/user-attachments/assets/7e2afaf2-07a5-447d-9888-3b77f2f6f855)
+
