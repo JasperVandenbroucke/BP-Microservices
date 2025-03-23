@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Data.Repository;
 using ProductService.Dtos;
+using ProductService.SyncDataServices.Http;
 
 namespace ProductService.Controllers
 {
@@ -11,11 +12,16 @@ namespace ProductService.Controllers
     {
         private readonly IProductRepo _repository;
         private readonly IMapper _mapper;
+        private readonly IShoppingCartDataClient _shoppingCartDataClient;
 
-        public ProductsController(IProductRepo repository, IMapper mapper)
+        public ProductsController(
+            IProductRepo repository,
+            IMapper mapper,
+            IShoppingCartDataClient shoppingCartDataClient)
         {
             _repository = repository;
             _mapper = mapper;
+            _shoppingCartDataClient = shoppingCartDataClient;
         }
 
         [HttpGet]
@@ -40,6 +46,23 @@ namespace ProductService.Controllers
             }
 
             return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> TestInboundConnection()
+        {
+            var productDto = new ProductReadDto() { Id = 9, Name = "test", Price = 12.5 };
+
+            try
+            {
+                await _shoppingCartDataClient.SendProductToShoppingCart(productDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+            }
+
+            return Ok("--> Succesfuly send POST from ProductServer");
         }
     }
 }

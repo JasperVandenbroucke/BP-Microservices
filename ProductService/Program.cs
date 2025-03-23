@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProductService.Data;
 using ProductService.Data.Repository;
+using ProductService.SyncDataServices.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +18,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IProductRepo, ProductRepo>();
 
+builder.Services.AddHttpClient<IShoppingCartDataClient, ShoppingCartDataClient>();
+
 // Adding AutoMapper to the project
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+Console.WriteLine($"--> ShoppingCart dev endpoint: {builder.Configuration["ShoppingCartService"]}");
 
 var app = builder.Build();
 

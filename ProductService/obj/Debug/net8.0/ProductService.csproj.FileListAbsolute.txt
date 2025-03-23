@@ -178,3 +178,4 @@ C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ProductService\obj\Debug
 C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ProductService\obj\Debug\net8.0\ProductService.genruntimeconfig.cache
 C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ProductService\obj\Debug\net8.0\ref\ProductService.dll
 C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ProductService\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.InMemory.dll
+C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ProductService\bin\Debug\net8.0\appsettings.Development.json
