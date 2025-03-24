@@ -24,3 +24,8 @@ Before I started programming further I took some time today to make a visual rep
 
 ![image](https://github.com/user-attachments/assets/7e2afaf2-07a5-447d-9888-3b77f2f6f855)
 
+### Sunday 23/03/2025
+
+Today I have been working on the ShoppingCartService, which will be responsible for managing shopping carts. 
+
+I also set up synchronous communication between the ProductService and the ShoppingCartService.
