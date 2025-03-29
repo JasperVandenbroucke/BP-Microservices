@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpproducts-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bpproductservice
+  template:
+    metadata:
+      labels:
+        app: bpproductservice
+    spec:
+      containers:
+        - name: bpproductservice
+          image: hogentjaspervandenbroucke/bpproductservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpproducts-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: bpproductservice
+  ports:
+    - name: bpproductservice
+      protocol: TCP
+      port: 8080
+      targetPort: 8080

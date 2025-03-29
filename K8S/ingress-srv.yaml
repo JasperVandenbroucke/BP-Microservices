@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+    - host: bp.microservices.com
+      http:
+        paths:
+          - path: /api/products
+            pathType: Prefix
+            backend:
+              service:
+                name: bpproducts-clusterip-service
+                port:
+                  number: 8080
+          - path: /api/shoppingcart
+            pathType: Prefix
+            backend:
+              service:
+                name: bpshoppingcarts-clusterip-service
+                port:
+                  number: 8080
