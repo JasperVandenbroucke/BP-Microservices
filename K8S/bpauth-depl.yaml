@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpauth-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bpauthservice
+  template:
+    metadata:
+      labels:
+        app: bpauthservice
+    spec:
+      containers:
+        - name: bpauthservice
+          image: hogentjaspervandenbroucke/bpauthservice:latest
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bp-jwt-secret
+                  key: JWT_SECRET
+            - name: PORT
+              value: "4000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpauth-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: bpauthservice
+  ports:
+    - name: bpauthservice
+      protocol: TCP
+      port: 4000
+      targetPort: 4000

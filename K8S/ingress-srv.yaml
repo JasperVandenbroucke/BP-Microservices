@@ -3,9 +3,13 @@ kind: Ingress
 metadata:
   name: ingress-srv
   annotations:
-    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-url: "http://bpauth-clusterip-service.default.svc.cluster.local:4000/validate"
+    nginx.ingress.kubernetes.io/auth-cache-key: "$http_authorization"
+    nginx.ingress.kubernetes.io/auth-method: "GET"
+    nginx.ingress.kubernetes.io/auth-response-headers: "UserId, Username"
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
+  ingressClassName: nginx
   rules:
     - host: bp.microservices.com
       http:
