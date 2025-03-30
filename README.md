@@ -53,3 +53,11 @@ Today I tried to set up a simple authentication service myself with Node JS. The
 This approach works well and gives good results. Tomorrow I then want to look at setting this up in my project as well.
 
 ![image](https://github.com/user-attachments/assets/cc7d44e3-5c40-470d-a071-4a58c9838c24)
+
+### Saturday 29/03/2025
+
+Before I could start working on AuthService, I needed to be able to run my 2 services in kubernetes. For this, I created a Docker Image for each service (Product and ShoppingCart) along with a yaml file for Kubernetes. Then I created an appsettings.Production in which I defined a new connection to the ShoppingCartService, namely by using the ClusterIP.
+
+### Sunday 30/03/2025
+
+Today I effectively added an AuthService in Node JS to the project. For the authentication to succeed, I then also configured the Ingress controller.
