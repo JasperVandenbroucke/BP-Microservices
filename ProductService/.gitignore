@@ -1,0 +1,27 @@
+# Binaries
+/bin/
+/obj/
+/*.dll
+/*.exe
+/*.pdb
+/*.suo
+/*.user
+/*.userosscache
+/*.sln.docstates
+
+# Temporary files
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+*.log
+*.tmp
+*.cache
+*.shfbproj.user
+*.orig
+
+# User-specific files
+*.env
+appsetting*.json
+
+# VS Code files
+.vscode/

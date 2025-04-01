@@ -10,11 +10,22 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Use an InMemory db for development
-Console.WriteLine("--> Using an InMemory database");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("ProductInMemoryDb")
-);
+if (builder.Environment.IsProduction())
+{
+    // Use a SQL Server db for production
+    Console.WriteLine("--> Using a SQL Server database");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("ProductsSQLConnection"))
+    );
+}
+else
+{
+    // Use an InMemory db for development
+    Console.WriteLine("--> Using an InMemory database");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("ProductInMemoryDb")
+    );
+}
 
 builder.Services.AddScoped<IProductRepo, ProductRepo>();
 
@@ -37,6 +48,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapControllers();
 
-PrepDb.PrepPopulation(app);
+PrepDb.PrepPopulation(app, app.Environment.IsProduction());
 
 app.Run();

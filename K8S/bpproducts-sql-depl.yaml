@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpproducts-sql-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bpproducts-sql
+  template:
+    metadata:
+      labels:
+        app: bpproducts-sql
+    spec:
+      containers:
+        - name: bpproducts-sql
+          image: mcr.microsoft.com/mssql/server:2019-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: MSSQL_PID
+              value: "Express"
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bp-products-sql
+                  key: SA_PASSWORD
+          volumeMounts:
+            - mountPath: /var/opt/mssql/data
+              name: sqlproductsdb
+      volumes:
+        - name: sqlproductsdb
+          persistentVolumeClaim:
+            claimName: bpproducts-sql-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpproducts-sql-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: bpproducts-sql
+  ports:
+    - name: bpproducts-sql
+      protocol: TCP
+      port: 1433
+      targetPort: 1433
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpproducts-sql-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: bpproducts-sql
+  ports:
+    - protocol: TCP
+      port: 1433
+      targetPort: 1433
