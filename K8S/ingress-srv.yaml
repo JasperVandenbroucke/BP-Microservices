@@ -28,3 +28,21 @@ spec:
                 name: bpshoppingcarts-clusterip-service
                 port:
                   number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: auth-ingress-srv
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: bp.microservices.com
+      http:
+        paths:
+          - path: /login
+            pathType: Prefix
+            backend:
+              service:
+                name: bpauth-clusterip-service
+                port:
+                  number: 4000
