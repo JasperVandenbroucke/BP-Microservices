@@ -11,7 +11,7 @@ using ProductService.Data;
 namespace ProductService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250315170126_initialMigration")]
+    [Migration("20250401125655_initialMigration")]
     partial class initialMigration
     {
         /// <inheritdoc />
