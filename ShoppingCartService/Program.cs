@@ -1,9 +1,24 @@
+using Microsoft.EntityFrameworkCore;
+using ShoppingCartService.Data;
+using ShoppingCartService.Data.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Use an InMemory db for development
+Console.WriteLine("--> Using an InMemory database");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseInMemoryDatabase("ShoppingCartInMemoryDb")
+);
+
+builder.Services.AddScoped<IShoppingCartRepo, ShoppingCartRepo>();
+
+// Adding AutoMapper to the project
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
