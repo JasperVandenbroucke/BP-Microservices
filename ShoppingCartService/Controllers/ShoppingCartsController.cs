@@ -51,6 +51,7 @@ namespace ShoppingCartService.Controllers
                 {
                     var product = products?.FirstOrDefault(product => product.Id == item.ProductId);
                     item.Price = product.Price;
+                    item.Name = product.Name;
                 }
             }
 
