@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Data.Repository;
 using ProductService.Dtos;
+using ProductService.Models;
 using ProductService.SyncDataServices.Http;
 
 namespace ProductService.Controllers
@@ -25,21 +26,21 @@ namespace ProductService.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProductReadDto>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductReadDto>>> GetProducts()
         {
             Console.WriteLine("--> Getting all products...");
 
-            var productItems = _repository.GetAllProducts();
+            var productItems = await _repository.GetAllProducts();
 
             return Ok(_mapper.Map<IEnumerable<ProductReadDto>>(productItems));
         }
 
         [HttpGet("{id}")]
-        public ActionResult<ProductReadDto> GetProductById(int id)
+        public async Task<ActionResult<ProductReadDto>> GetProductById(int id)
         {
             Console.WriteLine("--> Getting a single product...");
 
-            var productItem = _repository.GetProductById(id);
+            var productItem = await _repository.GetProductById(id);
             if (productItem != null)
             {
                 return Ok(_mapper.Map<ProductReadDto>(productItem));
@@ -63,6 +64,19 @@ namespace ProductService.Controllers
             }
 
             return Ok("--> Succesfuly send POST from ProductServer");
+        }
+
+        [HttpPost("bulk")]
+        public async Task<ActionResult<IEnumerable<ProductReadDto>>> GetProductsByIds([FromBody] List<int> productIds)
+        {
+            Console.WriteLine("--> Received call from ShoppingService...");
+
+            var products = await _repository.GetProductsByIds(productIds);
+
+            if (products == null)
+                return NotFound("--> No products found");
+
+            return Ok(_mapper.Map<IEnumerable<ProductReadDto>>(products));
         }
     }
 }

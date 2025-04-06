@@ -6,7 +6,8 @@ namespace ProductService.Data.Repository
     {
         bool SaveChanges();
 
-        IEnumerable<Product> GetAllProducts();
-        Product GetProductById(int id);
+        Task<IEnumerable<Product>> GetAllProducts();
+        Task<Product> GetProductById(int id);
+        Task<IEnumerable<Product>> GetProductsByIds(List<int> ids);
     }
 }
