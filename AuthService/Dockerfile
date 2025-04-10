@@ -1,7 +1,8 @@
 FROM node:20
 WORKDIR /app
 COPY package*.json ./
+ENV USE_DB=true
 RUN npm install
 COPY . .
-CMD ["node", "index.js"]
 EXPOSE 4000
+CMD ["node", "index.js"]
