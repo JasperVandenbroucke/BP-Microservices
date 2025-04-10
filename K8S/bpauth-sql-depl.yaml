@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpauth-sql-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bpauth-sql
+  template:
+    metadata:
+      labels:
+        app: bpauth-sql
+    spec:
+      containers:
+        - name: bpauth-sql
+          image: mcr.microsoft.com/mssql/server:2019-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: MSSQL_PID
+              value: "Express"
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bp-auth-sql
+                  key: SA_PASSWORD
+          volumeMounts:
+            - mountPath: /var/opt/mssql/data
+              name: sqlauthdb
+      volumes:
+        - name: sqlauthdb
+          persistentVolumeClaim:
+            claimName: bpauth-sql-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpauth-sql-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: bpauth-sql
+  ports:
+    - name: bpauth-sql
+      protocol: TCP
+      port: 1433
+      targetPort: 1433
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bpauth-sql-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: bpauth-sql
+  ports:
+    - protocol: TCP
+      port: 3342
+      targetPort: 1433
