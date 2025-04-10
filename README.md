@@ -61,3 +61,27 @@ Before I could start working on AuthService, I needed to be able to run my 2 ser
 ### Sunday 30/03/2025
 
 Today I effectively added an AuthService in Node JS to the project. For the authentication to succeed, I then also configured the Ingress controller.
+
+### Thursday 10/04/2025
+
+I haven't written anything in this log about the microservices application for several days. However, I did not sit still and continued working on the application.
+
+The current state of the application:
+- ProductService
+  - Get all products
+  - Get a single product
+  - Its own database
+- ShoppingCartService
+  - Get a user's shopping cart
+  - Add a product to the shopping cart
+  - Its own database
+  - Communication with the ProductService
+- AuthService
+  - Login
+  - Validate JWT token before the request is sent to the desired service
+  - Passing the UserId and UserName to the underlying services
+  - Having its own database
+
+In addition, there is already a RabbitMQ instation in Kubernetes for the asynchronous calls in the OrderServices. Therefore, this service is the next one that will be worked out in the application (last service).
+
+When this service is working then it will be switched to the monolithic application. A front-end can be added later but is not necessary for testing.
