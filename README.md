@@ -85,3 +85,7 @@ The current state of the application:
 In addition, there is already a RabbitMQ instation in Kubernetes for the asynchronous calls in the OrderServices. Therefore, this service is the next one that will be worked out in the application (last service).
 
 When this service is working then it will be switched to the monolithic application. A front-end can be added later but is not necessary for testing.
+
+### Wednesday 16/04/2025
+
+Another few days passed and there is an OrderService with sync communication to the ShoppingCartService.
