@@ -21,16 +21,10 @@ namespace OrderService.Data.Repository
             return await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
-        public async Task<Order> PlaceOrder(ShoppingCartReadDto shoppingCartDto) // dto instead of int
+        public async Task PlaceOrder(Order orderToPlace)
         {
-            var orderToPlace = _mapper.Map<Order>(shoppingCartDto);
-            orderToPlace.Status = "Verwerking";
-            orderToPlace.TotalPrice = orderToPlace.Items.Sum(i => i.Price);
-
             _context.Orders.Add(orderToPlace);
             await SaveChanges();
-
-            return orderToPlace;
         }
 
         public async Task<bool> SaveChanges()

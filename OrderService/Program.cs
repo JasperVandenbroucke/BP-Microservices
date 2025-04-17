@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OrderService.AsyncDataServices;
 using OrderService.Data;
 using OrderService.Data.Repository;
 using OrderService.SyncDataServices.Http;
@@ -16,6 +17,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
 builder.Services.AddHttpClient<IShoppingCartDataClient, ShoppingCartDataClient>();
 
@@ -35,5 +38,8 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 PrepDb.PrepPopulation(app, app.Environment.IsProduction());
+
+var messageBus = app.Services.GetRequiredService<IMessageBusClient>();
+await messageBus.InitializeAsync();
 
 app.Run();

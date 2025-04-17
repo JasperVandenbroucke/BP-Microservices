@@ -43,6 +43,17 @@ namespace ShoppingCartService.Data.Repository
                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
+        public void DeleteCart(ShoppingCart cart)
+        {
+            _context.ShoppingCarts.Remove(cart);
+            SaveChanges();
+        }
+
+        public bool ShoppingCartExists(int shoppingCartId, int userId)
+        {
+            return _context.ShoppingCarts.Any(c => c.Id == shoppingCartId && c.UserId == userId);
+        }
+
         public bool SaveChanges()
         {
             return (_context.SaveChanges() >= 0);
