@@ -179,3 +179,4 @@ C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ShoppingCartService\obj\
 C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ShoppingCartService\obj\Debug\net8.0\ShoppingCartService.pdb
 C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ShoppingCartService\obj\Debug\net8.0\ShoppingCartService.genruntimeconfig.cache
 C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ShoppingCartService\obj\Debug\net8.0\ref\ShoppingCartService.dll
+C:\Users\jaspe\MicroServices\BP-Ecommerce-Microservices\ShoppingCartService\bin\Debug\net8.0\appsettings.Production.json
