@@ -15,6 +15,8 @@ namespace OrderService.SyncDataServices.Http
 
         public async Task<ShoppingCartReadDto> GetShoppingCartContent(int userId)
         {
+            Console.WriteLine($"--> Getting cart content at {_configuration["ShoppingCartService"]}");
+
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, _configuration["ShoppingCartService"]);

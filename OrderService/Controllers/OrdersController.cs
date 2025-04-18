@@ -30,7 +30,14 @@ namespace OrderService.Controllers
         {
             Console.WriteLine("--> Getting an order...");
 
-            var order = await _repository.GetOrderById(orderId);
+            // Get the user ID from the logged-in user
+            var userIdHeader = Request.Headers["UserId"].FirstOrDefault();
+            if (string.IsNullOrEmpty(userIdHeader))
+                return BadRequest("UserId header is required");
+            if (!int.TryParse(userIdHeader, out int userId))
+                return BadRequest("UserId header must be a valid integer");
+
+            var order = await _repository.GetOrderById(orderId, userId);
             if (order == null)
                 return NotFound($"No order found with id {orderId}");
 

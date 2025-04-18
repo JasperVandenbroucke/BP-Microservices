@@ -1,6 +1,5 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using OrderService.Dtos;
 using OrderService.Models;
 
 namespace OrderService.Data.Repository
@@ -8,19 +7,17 @@ namespace OrderService.Data.Repository
     public class OrderRepository : IOrderRepository
     {
         private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
 
-        public OrderRepository(AppDbContext context, IMapper mapper)
+        public OrderRepository(AppDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
-        public async Task<Order> GetOrderById(int orderId)
+        public async Task<Order> GetOrderById(int orderId, int userId)
         {
             return await _context.Orders
                 .Include(o => o.Items)
-                .FirstOrDefaultAsync(o => o.Id == orderId);
+                .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId);
         }
 
         public async Task PlaceOrder(Order orderToPlace)

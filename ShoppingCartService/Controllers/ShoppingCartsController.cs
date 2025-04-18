@@ -6,7 +6,7 @@ using ShoppingCartService.SyncDataServices.Http;
 
 namespace ShoppingCartService.Controllers
 {
-    [Route("api/shoppingcart")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ShoppingCartsController : ControllerBase
     {
