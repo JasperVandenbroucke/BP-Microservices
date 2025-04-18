@@ -18,7 +18,9 @@ namespace OrderService.Data.Repository
 
         public async Task<Order> GetOrderById(int orderId)
         {
-            return await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+            return await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public async Task PlaceOrder(Order orderToPlace)
