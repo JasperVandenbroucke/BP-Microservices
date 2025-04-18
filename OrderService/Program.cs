@@ -11,10 +11,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-Console.WriteLine("--> Using an InMemory database");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("OrderInMemoryDb")
-);
+if (builder.Environment.IsProduction())
+{
+    Console.WriteLine("--> Using a SQL database");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("OrdersSQLConnection"))
+    );
+}
+else
+{
+    Console.WriteLine("--> Using an InMemory database");
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("OrderInMemoryDb")
+    );
+}
 
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
