@@ -8,5 +8,7 @@ namespace ShoppingCartService.Data.Repository
 
         Task<bool> AddProductToCart(int userId, int productId);
         Task<ShoppingCart> GetCart(int userId);
+        void DeleteCart(ShoppingCart cart);
+        bool ShoppingCartExists(int shoppingCartId, int userId);
     }
 }

@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using ShoppingCartService.AsyncDataServices;
 using ShoppingCartService.Data;
 using ShoppingCartService.Data.Repository;
+using ShoppingCartService.EventProcessing;
 using ShoppingCartService.SyncDataServices.Http;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +32,10 @@ builder.Services.AddScoped<IShoppingCartRepo, ShoppingCartRepo>();
 
 builder.Services.AddHttpClient<IProductDataClient, ProductDataClient>();
 
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+
+builder.Services.AddSingleton<MessageBusSub>();
+
 // Adding AutoMapper to the project
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -50,5 +56,8 @@ if (app.Environment.IsProduction())
     // If production => migrate db
     PrepDb.PrepPopulation(app);
 }
+
+var messageBusSub = app.Services.GetRequiredService<MessageBusSub>();
+await messageBusSub.InitializeRabbitMQAsync();
 
 app.Run();

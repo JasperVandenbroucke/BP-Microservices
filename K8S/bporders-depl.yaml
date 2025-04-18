@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bporders-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bporderservice
+  template:
+    metadata:
+      labels:
+        app: bporderservice
+    spec:
+      containers:
+        - name: bporderservice
+          image: hogentjaspervandenbroucke/bporderservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bporders-clusterip-service
+spec:
+  type: ClusterIP
+  selector:
+    app: bporderservice
+  ports:
+    - name: bporderservice
+      protocol: TCP
+      port: 8080
+      targetPort: 8080

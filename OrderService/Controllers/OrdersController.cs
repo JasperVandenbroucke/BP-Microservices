@@ -1,7 +1,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.AsyncDataServices;
 using OrderService.Data.Repository;
 using OrderService.Dtos;
+using OrderService.Models;
 using OrderService.SyncDataServices.Http;
 
 namespace OrderService.Controllers
@@ -13,18 +15,29 @@ namespace OrderService.Controllers
         private readonly IOrderRepository _repository;
         private readonly IMapper _mapper;
         private readonly IShoppingCartDataClient _dataClient;
+        private readonly IMessageBusClient _messageBusClient;
 
-        public OrdersController(IOrderRepository orderRepository, IMapper mapper, IShoppingCartDataClient shoppingCartDataClient)
+        public OrdersController(IOrderRepository orderRepository, IMapper mapper, IShoppingCartDataClient shoppingCartDataClient, IMessageBusClient messageBusClient)
         {
             _repository = orderRepository;
             _mapper = mapper;
             _dataClient = shoppingCartDataClient;
+            _messageBusClient = messageBusClient;
         }
 
         [HttpGet("{orderId}", Name = "GetOrderById")]
         public async Task<ActionResult<OrderReadDto>> GetOrderById(int orderId)
         {
-            var order = await _repository.GetOrderById(orderId);
+            Console.WriteLine("--> Getting an order...");
+
+            // Get the user ID from the logged-in user
+            var userIdHeader = Request.Headers["UserId"].FirstOrDefault();
+            if (string.IsNullOrEmpty(userIdHeader))
+                return BadRequest("UserId header is required");
+            if (!int.TryParse(userIdHeader, out int userId))
+                return BadRequest("UserId header must be a valid integer");
+
+            var order = await _repository.GetOrderById(orderId, userId);
             if (order == null)
                 return NotFound($"No order found with id {orderId}");
 
@@ -34,6 +47,7 @@ namespace OrderService.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderReadDto>> CreateOrder()
         {
+            Console.WriteLine("--> Placing an order...");
             try
             {
                 // Get the user ID from the logged-in user
@@ -44,12 +58,27 @@ namespace OrderService.Controllers
                     return BadRequest("UserId header must be a valid integer");
 
                 var shoppingCartDto = await _dataClient.GetShoppingCartContent(userId);
+                var orderToPlace = _mapper.Map<Order>(shoppingCartDto);
+                orderToPlace.Status = "Verwerking";
+                orderToPlace.TotalPrice = orderToPlace.Items.Sum(i => i.Price);
 
-                var newOrder = await _repository.PlaceOrder(shoppingCartDto);
-                if (newOrder == null)
-                    return BadRequest("Could not place the order...");
+                await _repository.PlaceOrder(orderToPlace);
 
-                return Ok(_mapper.Map<OrderReadDto>(newOrder));
+                var orderReadDto = _mapper.Map<OrderReadDto>(orderToPlace);
+
+                // Tell the ShoppingCartService about the order
+                try
+                {
+                    var orderPublishedDto = _mapper.Map<OrderPublishedDto>(orderReadDto);
+                    orderPublishedDto.Event = "Order_Published";
+                    await _messageBusClient.PublishNewOrder(orderPublishedDto);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
+                }
+
+                return CreatedAtRoute(nameof(GetOrderById), new { OrderId = orderReadDto.Id }, orderReadDto);
             }
             catch (Exception ex)
             {

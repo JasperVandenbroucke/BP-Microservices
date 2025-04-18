@@ -17,6 +17,7 @@ namespace OrderService.AutoMapper
                 .ForMember(dest => dest.TotalPrice, opt => opt.Ignore())
                 .ForMember(dest => dest.Status, opt => opt.Ignore())
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<OrderReadDto, OrderPublishedDto>();
         }
     }
 }

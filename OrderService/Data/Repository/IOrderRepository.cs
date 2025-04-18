@@ -7,7 +7,7 @@ namespace OrderService.Data.Repository
     {
         Task<bool> SaveChanges();
 
-        Task<Order> GetOrderById(int orderId);
-        Task<Order> PlaceOrder(ShoppingCartReadDto shoppingCartDto);
+        Task<Order> GetOrderById(int orderId, int userId);
+        Task PlaceOrder(Order orderToPlace);
     }
 }
