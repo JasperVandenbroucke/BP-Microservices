@@ -39,7 +39,6 @@ async function initDatabase() {
     // 3. Verbinden met de aangemaakte database
     await sql.close();
     const dbPool = await sql.connect(dbConfig);
-
     console.log(`--> Using DB: ${dbPool.config.database}`);
 
     // 4. Maak Users-tabel aan indien nodig
@@ -53,20 +52,39 @@ async function initDatabase() {
           id INT PRIMARY KEY IDENTITY(1,1),
           username NVARCHAR(255) UNIQUE NOT NULL,
           password NVARCHAR(255) NOT NULL,
-          role NVARCHAR(50) NOT NULL
         );
-
-        INSERT INTO Users (username, password, role)
-        VALUES 
-          ('jane', '${bcrypt.hashSync("janepass", 10)}', 'user'),
-          ('bob', '${bcrypt.hashSync("bobsecure", 10)}', 'user'),
-          ('sara', '${bcrypt.hashSync("sarapass", 10)}', 'user'),
-          ('tom', '${bcrypt.hashSync("tomcat", 10)}', 'user'),
-          ('lisa', '${bcrypt.hashSync("lisapwd", 10)}', 'user'),
-          ('mark', '${bcrypt.hashSync("mark", 10)}', 'user'),
-          ('jasper', '${bcrypt.hashSync("jasperadmin", 10)}', 'admin')
       END
     `);
+
+    const users = [
+      { username: "jane", password: "janepass" },
+      { username: "bob", password: "bobsecure" },
+      { username: "sara", password: "sarapass" },
+      { username: "tom", password: "tomcat" },
+      { username: "lisa", password: "lisapwd" },
+      { username: "mark", password: "mark" },
+      { username: "jasper", password: "jasperadmin" },
+    ];
+
+    for (const user of users) {
+      const hashedPwd = await bcrypt.hash(user.password, 10);
+
+      // Alleen toevoegen als gebruiker nog niet bestaat
+      const exists = await dbPool
+        .request()
+        .input("username", sql.NVarChar, user.username)
+        .query("SELECT 1 FROM Users WHERE username = @username");
+
+      if (exists.recordset.length === 0) {
+        await dbPool
+          .request()
+          .input("username", sql.NVarChar, user.username)
+          .input("password", sql.NVarChar, hashedPwd).query(`
+            INSERT INTO Users (username, password)
+            VALUES (@username, @password)
+          `);
+      }
+    }
 
     console.log("✅ DB + Users table ready");
   } catch (error) {

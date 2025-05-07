@@ -43,6 +43,9 @@ app.post("/login", async (req, res) => {
     return res.status(401).json({ message: "User not found" });
   }
 
+  console.log("--> user: ", user);
+  console.log("--> password :", password);
+  console.log("--> user.password", user.password);
   if (!bcrypt.compareSync(password, user.password)) {
     console.log("--> ⛔ Invalid credentials");
     return res.status(401).json({ message: "Invalid credentials" });
@@ -56,6 +59,63 @@ app.post("/login", async (req, res) => {
 
   res.status(200).json({ token });
   console.log("--> ✅ Login successful!");
+});
+
+app.post("/registreren", async (req, res) => {
+  console.log("--> Trying to register...");
+
+  const { username, password } = req.body;
+  let existingUser;
+
+  if (useDb) {
+    try {
+      console.log("--> Using database to register...");
+      const pool = await sql.connect(dbConfig);
+
+      const result = await pool
+        .request()
+        .input("username", sql.NVarChar, username)
+        .query("SELECT * FROM Users WHERE username = @username");
+
+      existingUser = result.recordset[0];
+      if (existingUser) {
+        console.log("--> ⛔ Username already exists");
+        return res.status(401).json({ message: "Username already exists" });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      await pool
+        .request()
+        .input("username", sql.NVarChar, username)
+        .input("hashedPassword", sql.NVarChar, hashedPassword)
+        .query(
+          "INSERT INTO Users (username, password) VALUES (@username, @hashedPassword)"
+        );
+
+      console.log("--> ✅ User successfully registered");
+      return res.status(201).json({ message: "User registered successfully" });
+    } catch (err) {
+      console.error("--> ❌ Database error:", err);
+      return res.status(500).json({ message: "Database error", error: err });
+    }
+  } else {
+    console.log("--> Using mockdata");
+    existingUser = users.some((u) => u.username == username);
+    if (existingUser) {
+      console.log("--> ⛔ Username already exists");
+      return res.status(401).json({ message: "Username already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    users.push({ username, password: hashedPassword });
+
+    console.log("--> ✅ User registered in mockdata");
+    console.log("--> users: ", users);
+    return res
+      .status(201)
+      .json({ message: "User registered successfully (mock)" });
+  }
 });
 
 app.get("/validate", (req, res) => {

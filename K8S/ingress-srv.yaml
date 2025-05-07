@@ -53,3 +53,10 @@ spec:
                 name: bpauth-clusterip-service
                 port:
                   number: 4000
+          - path: /registreren
+            pathType: Prefix
+            backend:
+              service:
+                name: bpauth-clusterip-service
+                port:
+                  number: 4000
