@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProductService.Dtos;
 using ProductService.Models;
 
 namespace ProductService.Data.Repository
@@ -25,6 +26,12 @@ namespace ProductService.Data.Repository
         public async Task<IEnumerable<Product>> GetProductsByIds(List<int> ids)
         {
             return await _context.Products.Where(p => ids.Contains(p.Id)).ToListAsync();
+        }
+
+        public async Task CreateProduct(ProductCreateDto productCreateDto)
+        {
+            _context.Products.Add(new Product() { Name = productCreateDto.Name, Price = productCreateDto.Price });
+            await _context.SaveChangesAsync();
         }
 
         public bool SaveChanges()

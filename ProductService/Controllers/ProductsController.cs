@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Data.Repository;
 using ProductService.Dtos;
-using ProductService.Models;
 using ProductService.SyncDataServices.Http;
 
 namespace ProductService.Controllers
@@ -50,20 +49,17 @@ namespace ProductService.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> TestInboundConnection()
+        public async Task<ActionResult> CreateProduct(ProductCreateDto productCreateDto)
         {
-            var productDto = new ProductReadDto() { Id = 9, Name = "test", Price = 12.5 };
-
             try
             {
-                await _shoppingCartDataClient.SendProductToShoppingCart(productDto);
+                await _repository.CreateProduct(productCreateDto);
+                return Ok("Successfully created a product");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"--> Could not send synchronously: {ex.Message}");
+                return BadRequest("Failed to create product");
             }
-
-            return Ok("--> Succesfuly send POST from ProductServer");
         }
 
         [HttpPost("bulk")]
