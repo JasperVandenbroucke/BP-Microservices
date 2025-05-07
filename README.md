@@ -89,3 +89,9 @@ When this service is working then it will be switched to the monolithic applicat
 ### Wednesday 16/04/2025
 
 Another few days passed and there is an OrderService with sync communication to the ShoppingCartService.
+
+### Friday 18/04/2025
+
+Today I implemented the database for the OrderService.
+
+All functionalities in the application that I wanted to put in as a minimum are currently implemented, of course there is always room for expansion and optimization, but for the PoC this is sufficient.
